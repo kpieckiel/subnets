@@ -1,0 +1,24 @@
+RELEASE: {{ .Release.Name }}
+NAMESPACE: {{ .Release.Namespace }}
+URLS: ["http://{{ .Release.Name }}.{{ .Values.domain }}", "http://kwlug.{{ .Values.domain }}"]
+
+You can verify that these domains are reachable by running the following command:
+
+# Check differences
+
+helm diff {{ .Release.Name }} subnet-chart
+
+# Test
+
+xargs -n1 curl --write-out "URL: %{url_effective}\nType: %{content_type}\nCode: %{response_code}\n\n" --silent --location --output /dev/null <<_TEST_URLS
+http://{{ .Release.Name }}.{{ .Values.domain }}
+http://kwlug.{{ .Values.domain }}
+_TEST_URLS
+
+# Update
+
+helm upgrade {{ .Release.Name }} subnet-chart
+
+# Uninstall
+
+helm uninstall {{ .Release.Name }}

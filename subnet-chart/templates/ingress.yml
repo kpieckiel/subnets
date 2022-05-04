@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  creationTimestamp: null
+  name: {{ .Release.Name }}
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Release.Name }}.{{ .Values.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 80
+        path: /(.*)
+        pathType: Exact
+  - host: kwlug.{{ .Values.domain }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 80
+        path: /(.*)
+        pathType: Exact
+status:
+  loadBalancer: {}
